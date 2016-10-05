@@ -2,6 +2,7 @@ package br.calebe.ticketmachine.core;
 
 import br.calebe.ticketmachine.exception.PapelMoedaInvalidaException;
 import br.calebe.ticketmachine.exception.SaldoInsuficienteException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -10,19 +11,28 @@ import java.util.Iterator;
  */
 public class TicketMachine {
 
-    protected int valor;
-    protected int saldo;
-    protected int[] papelMoeda = {2, 5, 10, 20, 50, 100};
+    
+    private int precoDoBilhete;
+    private int saldo;
+    private ArrayList<Integer> papelMoeda;
 
-    public TicketMachine(int valor) {
-        this.valor = valor;
+    public TicketMachine(int precoDoBilhete) {
+        this.precoDoBilhete = precoDoBilhete;
         this.saldo = 0;
+        this.papelMoeda = new ArrayList();
+        this.papelMoeda.add(2);
+        this.papelMoeda.add(5);
+        this.papelMoeda.add(10);
+        this.papelMoeda.add(20);
+        this.papelMoeda.add(50);
+        this.papelMoeda.add(100);        
     }
+
 
     public void inserir(int quantia) throws PapelMoedaInvalidaException {
         boolean achou = false;
-        for (int i = 0; i < papelMoeda.length && !achou; i++) {
-            if (papelMoeda[1] == quantia) {
+        for (int i = 0; i < papelMoeda.size() && !achou; i++) {
+            if (papelMoeda.get(i) == quantia) {
                 achou = true;
             }
         }
@@ -36,17 +46,36 @@ public class TicketMachine {
         return saldo;
     }
 
-    public Iterator<Integer> getTroco() {
-        return null;
+   public Iterator<PapelMoeda> getTroco() {
+        return (new Troco(saldo)).getIterator();
     }
 
-    public String imprimir() throws SaldoInsuficienteException {
-        if (saldo < valor) {
+    private void isSaldoEnough() throws SaldoInsuficienteException {
+        if (saldo < precoDoBilhete) 
             throw new SaldoInsuficienteException();
-        }
+    }
+
+    public int getPrecoDoBilhete() {
+        return precoDoBilhete;
+    }
+
+    public void setPrecoDoBilhete(int precoDoBilhete) {
+        this.precoDoBilhete = precoDoBilhete;
+    }
+
+    public ArrayList<Integer> getPapelMoeda() {
+        return papelMoeda;
+    }
+
+    public String setPapelMoeda(ArrayList<Integer> papelMoeda) {
+        this.papelMoeda = papelMoeda;
+    
+
         String result = "*****************\n";
         result += "*** R$ " + saldo + ",00 ****\n";
         result += "*****************\n";
         return result;
     }
+
+    
 }
